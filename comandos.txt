@@ -1,0 +1,100 @@
+############################################################################
+#                                                                          #
+#           GUIA DE COMANDOS - COMPRESSÃO DE ARQUIVOS HUFFMAN              #
+#                                                                          #
+############################################################################
+
+# ==========================================================================
+#       SEÇÃO 1: COMANDOS PRINCIPAIS PARA COMPILAR E RODAR O PROJETO
+# ==========================================================================
+# Comandos para compilar e executar as funções de compressão e descompressão
+
+# --- PASSO 1: Compilação ---
+# Compilar os arquivos de código-fonte .java para .class
+javac Huffman.java No.java MinHeap.java
+
+# --- PASSO 2: Empacotamento ---
+# Criar o arquivo .jar executável a partir dos arquivos .class compilados
+jar cfe huffman.jar Huffman *.class
+
+# --- PASSO 3: Execução da Compressão ---
+# Comprimir o arquivo de entrada e gerar um arquivo de saída
+# Uso: java -jar huffman.jar -c <arquivo_original> <arquivo_comprimido>
+java -jar huffman.jar -c arq_de_teste.txt teste.huff
+
+# --- PASSO 4: Execução da Descompressão ---
+# Descomprimir o arquivo .huff e restaurar o arquivo original
+# Uso: java -jar huffman.jar -d <arquivo_comprimido> <arquivo_restaurado>
+java -jar huffman.jar -d teste.huff teste_restaurado.txt
+
+# --- PASSO 5: Verificação de Integridade ---
+# Comparar o arquivo original com o arquivo restaurado para garantir que são idênticos
+# Se o comando não produzir nenhuma saída, significa que o teste foi um SUCESSO
+diff arq_de_teste.txt teste_restaurado.txt
+
+# --- Limpeza Geral ---
+# Apagar os arquivos gerados durante a compilação e execução
+rm -f *.class huffman.jar teste.huff teste_restaurado.txt
+
+# ==========================================================================
+#   SEÇÃO 2: COMANDOS PARA GERAR ARQUIVOS E COLETAR DADOS PARA O RELATÓRIO
+# ==========================================================================
+# Comandos usados para gerar os cenários de teste para as análises de performance e taxa de compressão
+
+# --- Parte A: Geração de Arquivos para Teste de PERFORMANCE (TEMPO) ---
+
+# Criar um arquivo de texto com 100 KB
+for i in {1..17}; do cat arq_de_teste.txt >> texto_100kb.txt; done
+
+# Criar um arquivo de texto com 1 MB
+for i in {1..10}; do cat texto_100kb.txt >> texto_1mb.txt; done
+
+# Criar um arquivo de texto com  10 MB
+for i in {1..10}; do cat texto_1mb.txt >> texto_10mb.txt; done
+
+# --- Parte B: Geração de Arquivos para Teste de TAXA DE COMPRESSÃO (ESPAÇO) ---
+
+# Criar uma cópia do código-fonte para ser usada no teste
+cp Huffman.java codigo_fonte.java
+
+# Criar um arquivo de 10.000 bytes com um único caractere ('A') se repetindo
+printf 'A%.0s' {1..10000} > repetitivo.txt
+
+# Criar um arquivo de 10 KB com bytes aleatórios
+dd if=/dev/urandom of=aleatorio.dat bs=1k count=10
+
+# --- Parte C: Comandos para Coletar os Dados dos Testes ---
+
+# Medir o tempo de compressão e descompressão 
+
+# Medindo o tempo para o arquivo de 100 KB
+java -jar huffman.jar -c texto_100kb.txt temp.huff
+java -jar huffman.jar -d temp.huff temp_restaurado.txt
+
+# Medindo o tempo para o arquivo de 1 MB
+java -jar huffman.jar -c texto_1mb.txt temp.huff
+java -jar huffman.jar -d temp.huff temp_restaurado.txt
+
+# Medindo o tempo para o arquivo de 10 MB
+java -jar huffman.jar -c texto_10mb.txt temp.huff
+java -jar huffman.jar -d temp.huff temp_restaurado.txt
+
+# Medir os tamanhos para calcular a taxa de compressão
+
+# Comprimindo o arquivo de código-fonte
+java -jar huffman.jar -c codigo_fonte.java codigo_comprimido.huff
+
+# Verificando os tamanhos (original vs. comprimido)
+ls -l codigo_fonte.java codigo_comprimido.huff
+
+# Comprimindo o arquivo repetitivo
+java -jar huffman.jar -c repetitivo.txt repetitivo_comprimido.huff
+
+# Verificando os tamanhos (original vs. comprimido)
+ls -l repetitivo.txt repetitivo_comprimido.huff
+
+# Comprimindo o arquivo aleatório
+java -jar huffman.jar -c aleatorio.dat aleatorio_comprimido.huff
+
+# Verificando os tamanhos (original vs. comprimido)
+ls -l aleatorio.dat aleatorio_comprimido.huff
