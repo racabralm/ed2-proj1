@@ -98,3 +98,6 @@ java -jar huffman.jar -c aleatorio.dat aleatorio_comprimido.huff
 
 # Verificando os tamanhos (original vs. comprimido)
 ls -l aleatorio.dat aleatorio_comprimido.huff
+
+# Remover todos os arquivos .class, .jar, .huff, .dat e os arquivos de texto gerados nos testes
+rm -f *.class *.jar *.huff *.dat *_restaurado.txt texto_*.txt repetitivo.txt codigo_fonte.java
